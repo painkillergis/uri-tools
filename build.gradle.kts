@@ -5,7 +5,12 @@ plugins {
 }
 
 group = "com.painkillergis"
-version = "1.0-SNAPSHOT"
+version =
+  ProcessBuilder("sh", "-c", "git rev-list --count HEAD")
+    .start()
+    .apply { waitFor() }
+    .inputStream.bufferedReader().readText().trim()
+    .let { "v1.0.$it" }
 
 repositories {
   mavenCentral()
