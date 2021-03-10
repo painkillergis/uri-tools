@@ -18,8 +18,32 @@ repositories {
 
 dependencies {
   testImplementation(kotlin("test-junit5"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:+")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
+}
+
+configurations.all {
+  resolutionStrategy {
+    activateDependencyLocking()
+    componentSelection
+      .all(object : Action<ComponentSelection> {
+        @Mutate
+        override fun execute(selection: ComponentSelection) {
+          val version = selection.candidate.version
+          when {
+            version.matches(
+              Regex(
+                ".*[-.]rc\\d*$",
+                RegexOption.IGNORE_CASE
+              )
+            ) -> selection.reject("Release candidates are excluded")
+            version.matches(Regex(".*-M\\d+$")) -> selection.reject("Milestones are excluded")
+            version.matches(Regex(".*-alpha\\d+$")) -> selection.reject("Alphas are excluded")
+            version.matches(Regex(".*-beta\\d+$")) -> selection.reject("Betas are excluded")
+          }
+        }
+      })
+  }
 }
 
 tasks.test {
