@@ -1,1 +1,1 @@
-rootProject.name = "url-tools"
+rootProject.name = "uri-tools"
