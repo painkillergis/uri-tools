@@ -53,3 +53,5 @@ tasks.test {
 tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "11"
 }
+
+apply("./publish.gradle.kts")
